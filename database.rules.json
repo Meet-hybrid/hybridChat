@@ -1,0 +1,21 @@
+{
+  "rules": {
+    "presence": {
+      "$uid": {
+        // Users can only write their own presence
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "typing": {
+      "$convoId": {
+        // Anyone authenticated can read/write typing indicators
+        // (conversation membership is enforced at Firestore level)
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      }
+    }
+  }
+}
