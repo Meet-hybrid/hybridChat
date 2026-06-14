@@ -47,6 +47,12 @@ export const useChatStore = defineStore('chat', () => {
     })
   }
 
+  async function broadcastNotification(message) {
+    const usersSnap = await getDocs(collection(db, 'users'))
+    const promises = usersSnap.docs.map(u => addNotification(u.id, message, 'broadcast'))
+    await Promise.all(promises)
+  }
+
   // ── USERS ──────────────────────────────────────────────────
   async function fetchUsers() {
     const snap = await getDocs(collection(db, 'users'))

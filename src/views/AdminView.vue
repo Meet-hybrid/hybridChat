@@ -202,40 +202,22 @@
         </div>
       </section>
 
-      <!-- Reports -->
-      <section v-if="activeTab === 'reports'">
+      <!-- Broadcast -->
+      <section v-if="activeTab === 'broadcast'">
         <div class="admin-header">
-          <h1>Reports</h1>
-          <p>User reports and flagged content</p>
+          <h1>Broadcast</h1>
+          <p>Send a global notification to all users</p>
         </div>
 
-        <div v-if="reports.length === 0" class="empty-admin">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-          <p>No reports yet</p>
-        </div>
-
-        <div v-else class="admin-card">
-          <div class="user-table">
-            <div class="table-header">
-              <span>Reported User</span>
-              <span>Reported By</span>
-              <span>Reason</span>
-              <span>Date</span>
-              <span>Actions</span>
-            </div>
-            <div v-for="r in reports" :key="r.id" class="table-row">
-              <span style="font-weight:600;font-size:14px;">{{ r.reportedName }}</span>
-              <span style="font-size:13px;color:var(--text-3);">{{ r.reporterName }}</span>
-              <span style="font-size:13px;">{{ r.reason }}</span>
-              <span style="font-size:12px;color:var(--text-3);">{{ formatDate(r.createdAt) }}</span>
-              <div style="display:flex;gap:6px;">
-                <button class="action-pill danger" @click="banFromReport(r)">Ban User</button>
-                <button class="action-pill" @click="dismissReport(r)">Dismiss</button>
-              </div>
-            </div>
+        <div class="admin-card">
+          <div class="card-head">
+            <h2>Compose Broadcast</h2>
+          </div>
+          <div style="padding: 20px;">
+            <textarea v-model="broadcastText" class="input" style="height: 120px; resize: none;" placeholder="Type your announcement here..."></textarea>
+            <button class="btn btn-primary" style="margin-top: 16px;" @click="sendBroadcast" :disabled="broadcasting">
+              {{ broadcasting ? 'Sending...' : 'Send Broadcast' }}
+            </button>
           </div>
         </div>
       </section>
@@ -274,6 +256,24 @@ import { useAuthStore } from '@/store/auth'
 
 const chatStore = useChatStore()
 const authStore = useAuthStore()
+
+const broadcastText = ref('')
+const broadcasting = ref(false)
+
+async function sendBroadcast() {
+  if (!broadcastText.value.trim()) return
+  broadcasting.value = true
+  try {
+    await chatStore.broadcastNotification(broadcastText.value)
+    alert('Broadcast sent successfully!')
+    broadcastText.value = ''
+  } catch (e) {
+    console.error(e)
+    alert('Failed to send broadcast.')
+  } finally {
+    broadcasting.value = false
+  }
+}
 
 const activeTab = ref('overview')
 const userSearch = ref('')
@@ -336,6 +336,13 @@ const tabs = [
       h('path', { d: 'M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z' }),
       h('line', { x1: 12, y1: 9, x2: 12, y2: 13 }),
       h('line', { x1: 12, y1: 17, x2: 12.01, y2: 17 })
+    ]) }
+  },
+  {
+    id: 'broadcast', label: 'Broadcast',
+    icon: { render: () => h('svg', { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': 2 }, [
+      h('path', { d: 'M11 5L6 2v7l5-4z' }),
+      h('path', { d: 'M11 5h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h1' })
     ]) }
   },
 ]
