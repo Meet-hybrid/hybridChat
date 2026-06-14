@@ -28,6 +28,22 @@
             <input v-model="form.bio" class="input" placeholder="A short bio" />
           </div>
           <div class="field">
+            <label>Profession</label>
+            <input v-model="form.profession" class="input" placeholder="e.g. Software Engineer" />
+          </div>
+          <div class="field">
+            <label>Education</label>
+            <input v-model="form.education" class="input" placeholder="e.g. BS Computer Science" />
+          </div>
+          <div class="field">
+            <label>Skills (comma separated)</label>
+            <input v-model="form.skills" class="input" placeholder="e.g. JavaScript, Vue, Firebase" />
+          </div>
+          <div class="field" style="flex-direction:row;align-items:center;gap:8px;">
+            <input type="checkbox" v-model="form.openForHire" />
+            <label>Open for Hire</label>
+          </div>
+          <div class="field">
             <label>Avatar style (any word)</label>
             <input v-model="form.avatarSeed" class="input" placeholder="e.g. your name or a keyword" />
           </div>
@@ -97,7 +113,11 @@ const currentTheme = ref('violet')
 const form = reactive({
   displayName: user?.displayName || '',
   bio: user?.bio || '',
-  avatarSeed: user?.uid || ''
+  avatarSeed: user?.uid || '',
+  education: user?.education || '',
+  profession: user?.profession || '',
+  skills: user?.skills || '',
+  openForHire: user?.openForHire || false
 })
 
 const themes = [
@@ -115,12 +135,20 @@ async function saveProfile() {
     await updateDoc(doc(db, 'users', user.uid), {
       displayName: form.displayName,
       bio: form.bio,
-      photoURL
+      photoURL,
+      education: form.education,
+      profession: form.profession,
+      skills: form.skills,
+      openForHire: form.openForHire
     })
     await updateProfile(auth.currentUser, { displayName: form.displayName, photoURL })
     authStore.user.displayName = form.displayName
     authStore.user.bio = form.bio
     authStore.user.photoURL = photoURL
+    authStore.user.education = form.education
+    authStore.user.profession = form.profession
+    authStore.user.skills = form.skills
+    authStore.user.openForHire = form.openForHire
     saved.value = true
     setTimeout(() => saved.value = false, 2500)
   } catch(e) { console.error(e) }
