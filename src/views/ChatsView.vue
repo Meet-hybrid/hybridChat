@@ -148,29 +148,36 @@ async function createGroup() {
   backdrop-filter: blur(4px);
 }
 .modal-card {
-  background: var(--bg-2); border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: var(--bg-1); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   padding: 28px; width: 100%; max-width: 500px;
   border: 1px solid var(--border); border-bottom: none;
   max-height: 85vh; overflow-y: auto;
 }
 .btn-icon-plain {
   width: 32px; height: 32px; border-radius: 50%;
-  background: var(--surface); border: none; cursor: pointer;
+  background: var(--surface-2); border: none; cursor: pointer;
   color: var(--text-2); display: flex; align-items: center; justify-content: center;
   transition: var(--transition);
 }
-.btn-icon-plain:hover { background: var(--surface-2); color: var(--text-1); }
+.btn-icon-plain:hover { background: var(--border); color: var(--text-1); }
 
 .user-check {
   display: flex; align-items: center; gap: 10px; padding: 10px 12px;
-  border-radius: var(--radius); background: var(--surface);
+  border-radius: var(--radius); background: var(--bg-1);
   border: 1px solid var(--border); cursor: pointer; transition: var(--transition);
 }
 .user-check:hover { border-color: var(--primary); }
 .user-check input { width: 16px; height: 16px; accent-color: var(--primary); flex-shrink: 0; }
 
 .error-msg {
-  background: rgba(250,107,107,0.1); border: 1px solid var(--danger);
+  background: rgba(250,82,82,0.1); border: 1px solid var(--danger);
   border-radius: var(--radius); padding: 8px 12px; color: var(--danger); font-size: 13px;
+}
+
+@media (min-width: 768px) {
+  .modal-card {
+    border-radius: var(--radius-lg); border: 1px solid var(--border);
+    margin: auto; max-height: 80vh;
+  }
 }
 </style>
