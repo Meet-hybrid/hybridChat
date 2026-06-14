@@ -15,12 +15,37 @@ export const useChatStore = defineStore('chat', () => {
   const messages = ref([])
   const typingUsers = ref({})          // { convoId: { uid: true } }
   const onlineUsers = ref({})
+  const notifications = ref([])
   const allUsers = ref([])
   const floatOpen = ref(false)
   const floatMinimized = ref(false)
 
   let unsubMessages = null
   let unsubConvos = null
+  let unsubNotifications = null
+
+  // ── NOTIFICATIONS ──────────────────────────────────────────
+  function watchNotifications(uid) {
+    const q = query(
+      collection(db, 'notifications'),
+      where('userId', '==', uid),
+      orderBy('createdAt', 'desc'),
+      limit(20)
+    )
+    unsubNotifications = onSnapshot(q, snap => {
+      notifications.value = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+    })
+  }
+
+  async function addNotification(userId, message, type = 'system') {
+    await addDoc(collection(db, 'notifications'), {
+      userId,
+      message,
+      type,
+      read: false,
+      createdAt: serverTimestamp()
+    })
+  }
 
   // ── USERS ──────────────────────────────────────────────────
   async function fetchUsers() {
@@ -182,9 +207,10 @@ export const useChatStore = defineStore('chat', () => {
 
   return {
     conversations, activeConvoId, messages, typingUsers, onlineUsers, allUsers,
-    floatOpen, floatMinimized, activeConvo, typingInActive,
+    floatOpen, floatMinimized, activeConvo, typingInActive, notifications,
     fetchUsers, watchPresence, isOnline, watchConversations,
     getOrCreateDM, createGroup, watchMessages, sendMessage, reactToMessage,
-    setTyping, watchTyping, uploadMedia, openChat, toggleFloat, minimizeFloat
+    setTyping, watchTyping, uploadMedia, openChat, toggleFloat, minimizeFloat,
+    watchNotifications, addNotification
   }
 })
