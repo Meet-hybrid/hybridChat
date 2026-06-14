@@ -261,15 +261,24 @@ const broadcastText = ref('')
 const broadcasting = ref(false)
 
 async function sendBroadcast() {
+  console.log('--- DEBUGGING CHAT STORE ---');
+  console.dir(chatStore);
+  console.log('Keys in chatStore:', Object.keys(chatStore));
+  console.log('broadcastNotification exists:', typeof chatStore.broadcastNotification === 'function');
+  
   if (!broadcastText.value.trim()) return
   broadcasting.value = true
   try {
-    await chatStore.broadcastNotification(broadcastText.value)
-    alert('Broadcast sent successfully!')
-    broadcastText.value = ''
+    if (typeof chatStore.broadcastNotification === 'function') {
+      await chatStore.broadcastNotification(broadcastText.value)
+      alert('Broadcast sent successfully!')
+      broadcastText.value = ''
+    } else {
+      throw new Error('broadcastNotification is not a function')
+    }
   } catch (e) {
     console.error(e)
-    alert('Failed to send broadcast.')
+    alert('Failed to send broadcast: ' + e.message)
   } finally {
     broadcasting.value = false
   }
