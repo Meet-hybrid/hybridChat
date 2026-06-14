@@ -39,6 +39,46 @@
             <label>Skills (comma separated)</label>
             <input v-model="form.skills" class="input" placeholder="e.g. JavaScript, Vue, Firebase" />
           </div>
+          <div class="field">
+            <label>Interests (comma separated)</label>
+            <input v-model="form.interests" class="input" placeholder="e.g. Music, Travel, Reading" />
+          </div>
+          <div class="field">
+            <label>Sports (comma separated)</label>
+            <input v-model="form.sports" class="input" placeholder="e.g. Tennis, Hiking" />
+          </div>
+          <div class="field">
+            <label>Zodiac Sign</label>
+            <select v-model="form.zodiacSign" class="input">
+              <option value="">Select sign</option>
+              <option v-for="sign in ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']" :key="sign" :value="sign">{{ sign }}</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Gender</label>
+            <select v-model="form.gender" class="input">
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Non-binary">Non-binary</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Sexual Orientation</label>
+            <select v-model="form.orientation" class="input">
+              <option value="">Select orientation</option>
+              <option value="Heterosexual">Heterosexual</option>
+              <option value="Homosexual">Homosexual</option>
+              <option value="Bisexual">Bisexual</option>
+              <option value="Pansexual">Pansexual</option>
+              <option value="Asexual">Asexual</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Location</label>
+            <input v-model="form.location" class="input" placeholder="e.g. New York, USA" />
+          </div>
           <div class="field" style="flex-direction:row;align-items:center;gap:8px;">
             <input type="checkbox" v-model="form.openForHire" />
             <label>Open for Hire</label>
@@ -117,7 +157,13 @@ const form = reactive({
   education: user?.education || '',
   profession: user?.profession || '',
   skills: user?.skills || '',
-  openForHire: user?.openForHire || false
+  openForHire: user?.openForHire || false,
+  gender: user?.gender || '',
+  orientation: user?.orientation || '',
+  zodiacSign: user?.zodiacSign || '',
+  location: user?.location || '',
+  interests: user?.interests ? user.interests.join(', ') : '',
+  sports: user?.sports ? user.sports.join(', ') : ''
 })
 
 const themes = [
@@ -132,23 +178,27 @@ async function saveProfile() {
   saving.value = true
   try {
     const photoURL = `https://api.dicebear.com/7.x/adventurer/svg?seed=${form.avatarSeed || user?.uid}`
-    await updateDoc(doc(db, 'users', user.uid), {
+    const updateData = {
       displayName: form.displayName,
       bio: form.bio,
       photoURL,
       education: form.education,
       profession: form.profession,
       skills: form.skills,
-      openForHire: form.openForHire
-    })
+      openForHire: form.openForHire,
+      gender: form.gender,
+      orientation: form.orientation,
+      zodiacSign: form.zodiacSign,
+      location: form.location,
+      interests: form.interests.split(',').map(s => s.trim()).filter(s => s),
+      sports: form.sports.split(',').map(s => s.trim()).filter(s => s)
+    }
+    await updateDoc(doc(db, 'users', user.uid), updateData)
     await updateProfile(auth.currentUser, { displayName: form.displayName, photoURL })
-    authStore.user.displayName = form.displayName
-    authStore.user.bio = form.bio
-    authStore.user.photoURL = photoURL
-    authStore.user.education = form.education
-    authStore.user.profession = form.profession
-    authStore.user.skills = form.skills
-    authStore.user.openForHire = form.openForHire
+    
+    // Update local store
+    Object.assign(authStore.user, updateData)
+    
     saved.value = true
     setTimeout(() => saved.value = false, 2500)
   } catch(e) { console.error(e) }
