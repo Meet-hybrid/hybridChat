@@ -13,7 +13,11 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // ── Conversations ─────────────────────────────────────────
+    // ── Notifications ─────────────────────────────────────────
+    match /notifications/{notifId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null; // Simplified for broadcast; restrict to admin later
+    }
     match /conversations/{convoId} {
       // Must be a member to read
       allow read: if request.auth != null &&
