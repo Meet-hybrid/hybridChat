@@ -109,7 +109,7 @@
                 <img :src="u.photoURL || `https://api.dicebear.com/7.x/adventurer/svg?seed=${u.uid}`" class="avatar-sm" />
                 <span style="font-weight:600;font-size:14px;">{{ u.displayName }}</span>
               </div>
-              <span style="font-size:13px;color:var(--text-3);">{{ u.email }}</span>
+              <span style="font-size:13px;color:var(--text-3);">{{ u.email.split('@')[0].slice(0, 2) }}***@{{ u.email.split('@')[1] }}</span>
               <span>
                 <span :class="['status-dot', chatStore.isOnline(u.uid) ? 'online' : 'offline']"></span>
                 {{ chatStore.isOnline(u.uid) ? 'Online' : 'Offline' }}
@@ -152,7 +152,7 @@
                   <div v-if="u.bio" style="font-size:11px;color:var(--text-3);">{{ u.bio }}</div>
                 </div>
               </div>
-              <span style="font-size:13px;color:var(--text-3);">{{ u.email }}</span>
+              <span style="font-size:13px;color:var(--text-3);">{{ u.email.split('@')[0].slice(0, 2) }}***@{{ u.email.split('@')[1] }}</span>
               <span>
                 <span :class="['status-chip', u.banned ? 'banned' : chatStore.isOnline(u.uid) ? 'online' : 'offline']">
                   {{ u.banned ? 'Banned' : chatStore.isOnline(u.uid) ? 'Online' : 'Offline' }}

@@ -23,11 +23,12 @@
         <div class="field">
           <label>Password</label>
           <div class="input-wrap">
-            <input v-model="form.password" class="input" :type="showPw ? 'text' : 'password'" placeholder="••••••••" required />
+            <input v-model="form.password" class="input" :type="showPw ? 'text' : 'password'" placeholder="••••••••" :required="mode === 'login' || mode === 'register'" />
             <button type="button" class="pw-toggle" @click="showPw = !showPw">
               {{ showPw ? 'Hide' : 'Show' }}
             </button>
           </div>
+          <button v-if="mode === 'login'" type="button" class="link-btn" @click="handleForgotPassword">Forgot Password?</button>
         </div>
 
         <div v-if="mode === 'register'" class="terms-wrap">
@@ -56,6 +57,8 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/auth'
 import { useChatStore } from '@/store/chat'
+import { sendPasswordResetEmail } from 'firebase/auth'
+import { auth } from '@/firebase'
 
 const authStore = useAuthStore()
 const chatStore = useChatStore()
@@ -68,6 +71,19 @@ const showTerms = ref(false)
 const agreedTerms = ref(false)
 
 const form = reactive({ email: '', password: '', displayName: '' })
+
+async function handleForgotPassword() {
+  if (!form.email) {
+    alert('Please enter your email first.')
+    return
+  }
+  try {
+    await sendPasswordResetEmail(auth, form.email)
+    alert('Password reset email sent!')
+  } catch (e) {
+    alert(e.message)
+  }
+}
 
 async function handleSubmit() {
   if (mode.value === 'register' && !agreedTerms.value) {
@@ -141,6 +157,12 @@ async function handleGoogle() {
   position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
   background: none; border: none; cursor: pointer; font-size: 12px; color: var(--primary);
 }
+.link-btn {
+  background: none; border: none; color: var(--primary);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  margin-top: 8px; align-self: flex-start;
+}
+.link-btn:hover { text-decoration: underline; }
 
 .terms-wrap { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); }
 .error-msg { font-size: 13px; color: var(--danger); }

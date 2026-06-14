@@ -8,9 +8,9 @@
                class="avatar-xl" style="border:3px solid var(--primary);box-shadow:var(--shadow-glow);" />
           <span class="online-dot" style="position:absolute;bottom:4px;right:4px;width:14px;height:14px;border:3px solid var(--bg-1);"></span>
         </div>
-        <h2 style="font-size:22px;font-weight:800;margin-top:14px;letter-spacing:-0.3px;">{{ user?.displayName }}</h2>
-        <p style="color:var(--text-3);font-size:13px;margin-top:4px;">{{ user?.email }}</p>
-        <div v-if="user?.status" style="margin-top:8px;font-size:13px;color:var(--text-2);">{{ user?.status }}</div>
+        <h1 style="font-size:22px;font-weight:800;margin-top:14px;letter-spacing:-0.3px;">{{ user?.displayName }}</h1>
+        <p v-if="user?.bio" style="margin-top:8px;font-size:13px;color:var(--text-2);">{{ user?.bio }}</p>
+
       </div>
     </div>
 

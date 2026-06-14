@@ -27,8 +27,7 @@
         </div>
         <div style="flex:1;min-width:0;">
           <div style="font-weight:700;font-size:15px;">{{ u.displayName }}</div>
-          <div style="font-size:12px;color:var(--text-3);margin-top:2px;">{{ u.bio || u.email }}</div>
-          <div v-if="u.status" style="font-size:12px;color:var(--text-2);margin-top:4px;">{{ u.status }}</div>
+          <div v-if="u.bio" style="font-size:12px;color:var(--text-2);margin-top:4px;">{{ u.bio }}</div>
         </div>
         <button class="btn btn-secondary btn-sm" @click.stop="startDM(u)">Message</button>
         <button class="btn-report" @click.stop="reportUser(u)" title="Report user">

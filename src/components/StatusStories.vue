@@ -53,13 +53,13 @@
 
           <!-- Content -->
           <div class="story-content" :style="{ background: activeStory.bg || '#111' }">
-            <img v-if="activeStory.type === 'image'" :src="activeStory.mediaUrl" style="width:100%;height:100%;object-fit:contain;" />
-            <div v-else class="story-text-content">
-              <p style="font-size:24px;font-weight:800;text-align:center;color:white;padding:40px;text-shadow:0 2px 8px rgba(0,0,0,0.5);">
-                {{ activeStory.text }}
-              </p>
-            </div>
-
+          <img v-if="activeStory.type === 'image'" :src="activeStory.mediaUrl" style="width:100%;height:100%;object-fit:contain;" />
+          <video v-else-if="activeStory.type === 'video'" :src="activeStory.mediaUrl" autoplay playsinline style="width:100%;height:100%;object-fit:contain;" />
+          <div v-else class="story-text-content">
+            <p style="font-size:24px;font-weight:800;text-align:center;color:white;padding:40px;text-shadow:0 2px 8px rgba(0,0,0,0.5);">
+              {{ activeStory.text }}
+            </p>
+          </div>
             <!-- Emoji reaction bar -->
             <div class="story-reactions" @click.stop>
               <button v-for="e in ['❤️','🔥','😮','😂','👏']" :key="e"
